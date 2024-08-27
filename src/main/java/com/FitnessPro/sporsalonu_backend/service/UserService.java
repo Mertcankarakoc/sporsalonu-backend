@@ -108,9 +108,4 @@ public class UserService {
         return new ApiResponse(user, "User created successfully", HttpStatus.OK);
     }
 
-    public ApiResponse deleteAllUsers() {
-        userRepository.deleteAll();
-        return null;
-    }
-
 }
