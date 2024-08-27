@@ -1,0 +1,22 @@
+spring:
+  application:
+    name: user-service
+  datasource:
+    url: jdbc:mysql://localhost:3306/fitness_pro_db
+    username: root
+    password: Mert1903
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    properties:
+      hibernate.dialect: org.hibernate.dialect.MySQLDialect
+    hibernate:
+      ddl-auto: update
+
+
+application:
+  security:
+    token:
+      expiration-time: 1000000
+      refresh-expiration-time: 1000000
+    jwt:
+      secret-key: b3BlbnNzaC1rZXktdjEAAAAABG5vbmUAAAAEbm9uZQAAAAAAAAABAAAAlwAAAAdzc2gtcnNhAAAAAwEAAQAAAIEAylcERZ7wuce5A4dRVT8m4q6Jbe1DdAOY90/nLC8VzqRHHY1CiGWg0f55VWzHn6kQkJIZFm0KnoyXWJBqw3qvh+8NMlW6Y4zWF0omO3UxXSQNuVx1tXWLlBp5Dn2tpK1DGkBYoKe/n0D8j62tVje6WhLc+vvCoEK7DU0DYYLir1kAAAIQJ2n2RCdp9kQAAAAHc3NoLXJzYQAAAIEAylcERZ7wuce5A4dRVT8m4q6Jbe1DdAOY90/nLC8VzqRHHY1CiGWg0f55VWzHn6kQkJIZFm0KnoyXWJBqw3qvh+8NMlW6Y4zWF0omO3UxXSQNuVx1tXWLlBp5Dn2tpK1DGkBYoKe/n0D8j62tVje6WhLc+vvCoEK7DU0DYYLir1kAAAADAQABAAAAgEoRLFkn40q+V3V5NUaVRXC5H0mEDqsLHhV5xE+iNMNd00J4ESDIwuPb2SJyHWjOhGfHczOIWtjK8iPTSaGg6VubY261OJV2NDrokhy9l3jnnf9rFgkHu26ciLle+kxz0e5hOVqJpgbmutxXdOtHyJPB09HZqqjpENtOiCmt5CthAAAAQBK5gboER8c7SjnLLs8lCwX2g7ZRKB2Wzdjt0InM+2utokq1Mc/4HPkDEfx/11QMZYE2BObE8RSFzfVelhuykg4AAABBAP9yprw13ButUByTQ/nrvCQTcQu3kWwLfq7rhJMLCvqABX5rDFsnOh2zDJkaME5XD0jAro2CLD7SAfv3fMZlT3UAAABBAMrG+pKA77C9tqwEEQgFjeMSFuAPxgbvMAjETcx19WIbDTYeMw2mqspxJ4pI+dqT75x2ywRTKgZTEYMp5f6x59UAAAAZYWN0ZS10ZWNobm9sb2d5LWdlbmVyYXRlZAEC
