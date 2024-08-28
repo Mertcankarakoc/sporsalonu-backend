@@ -1,4 +1,4 @@
-package com.FitnessPro.sporsalonu_backend.service;
+package com.FitnessPro.sporsalonu_backend.service.jwt;
 
 import com.FitnessPro.sporsalonu_backend.model.User;
 import com.FitnessPro.sporsalonu_backend.repository.UserRepository;

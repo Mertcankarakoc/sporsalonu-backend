@@ -1,7 +1,7 @@
 package com.FitnessPro.sporsalonu_backend.config;
 
-import com.FitnessPro.sporsalonu_backend.service.CustomUserDetailsService;
-import com.FitnessPro.sporsalonu_backend.service.JwtService;
+import com.FitnessPro.sporsalonu_backend.service.jwt.CustomUserDetailsService;
+import com.FitnessPro.sporsalonu_backend.service.jwt.JwtService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
@@ -15,14 +15,11 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.core.GrantedAuthorityDefaults;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-import static com.FitnessPro.sporsalonu_backend.model.Enum.Role.ROLE_ADMIN;
-import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
 
 @Configuration
 @EnableWebSecurity
@@ -45,6 +42,7 @@ public class SecurityConfiguration {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
+                                "/membership/**",
                                 "/user/**",
                                 "/auth/**",
                                 "/v2/api-docs",

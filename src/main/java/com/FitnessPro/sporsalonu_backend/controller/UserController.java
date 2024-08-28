@@ -22,7 +22,6 @@ public class UserController {
         return userService.deleteUser(id);
     }
 
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping("/getAllUsers")
     public ApiResponse getAllUsers() {
         return userService.getAllUsers();

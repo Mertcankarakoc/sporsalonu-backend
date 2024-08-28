@@ -1,4 +1,4 @@
-package com.FitnessPro.sporsalonu_backend.service;
+package com.FitnessPro.sporsalonu_backend.service.jwt;
 
 import com.FitnessPro.sporsalonu_backend.dto.JwtAuthenticationResponse;
 import com.FitnessPro.sporsalonu_backend.dto.SignInRequest;
@@ -15,9 +15,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @Slf4j

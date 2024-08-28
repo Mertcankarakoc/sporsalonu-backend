@@ -3,7 +3,7 @@ package com.FitnessPro.sporsalonu_backend.controller;
 import com.FitnessPro.sporsalonu_backend.dto.JwtAuthenticationResponse;
 import com.FitnessPro.sporsalonu_backend.dto.SignInRequest;
 import com.FitnessPro.sporsalonu_backend.dto.SignUpRequest;
-import com.FitnessPro.sporsalonu_backend.service.AuthService;
+import com.FitnessPro.sporsalonu_backend.service.jwt.AuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;

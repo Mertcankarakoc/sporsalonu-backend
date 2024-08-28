@@ -25,13 +25,15 @@ public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
-    public ApiResponse deleteUser(UUID id) {
+
+    public ApiResponse getUserById(UUID id) {
         try {
-            userRepository.deleteById(id);
-            return new ApiResponse(null, "User deleted successfully", HttpStatus.OK);
+            var user = userRepository.findById(id)
+                    .orElseThrow(() -> new IllegalArgumentException("User not found"));
+            return new ApiResponse(user, "User fetched successfully", HttpStatus.OK);
         } catch (Exception e) {
-            log.error("Error while deleting user", e);
-            return new ApiResponse(null, "Error while deleting user", HttpStatus.INTERNAL_SERVER_ERROR);
+            log.error("Error while fetching user", e);
+            return new ApiResponse(null, "Error while fetching user", INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -44,9 +46,9 @@ public class UserService {
         }
     }
 
-    public ApiResponse getUserById(UUID id) {
+    public ApiResponse getUserByEmail(String email) {
         try {
-            var user = userRepository.findById(id)
+            var user = userRepository.findByEmail(email)
                     .orElseThrow(() -> new IllegalArgumentException("User not found"));
             return new ApiResponse(user, "User fetched successfully", HttpStatus.OK);
         } catch (Exception e) {
@@ -74,16 +76,6 @@ public class UserService {
         }
     }
 
-    public ApiResponse getUserByEmail(String email) {
-        try {
-            var user = userRepository.findByEmail(email)
-                    .orElseThrow(() -> new IllegalArgumentException("User not found"));
-            return new ApiResponse(user, "User fetched successfully", HttpStatus.OK);
-        } catch (Exception e) {
-            log.error("Error while fetching user", e);
-            return new ApiResponse(null, "Error while fetching user", INTERNAL_SERVER_ERROR);
-        }
-    }
 
     public ApiResponse createUser(UserCreateRequest request) {
         if (userRepository.findByEmail(request.getEmail()).isPresent()) {
@@ -100,12 +92,19 @@ public class UserService {
                 .birthDay(request.getBirthDay()) // Ensure birthDay is set correctly
                 .role(Role.ROLE_ADMIN) // Set the role from the request
                 .isActive(true) // Set default active status
-                .createdAt(LocalDateTime.now()) // Set createdAt to current time
-                .updatedAt(LocalDateTime.now()) // Set updatedAt to current time
                 .build();
 
         userRepository.save(user);
         return new ApiResponse(user, "User created successfully", HttpStatus.OK);
     }
 
+    public ApiResponse deleteUser(UUID id) {
+        try {
+            userRepository.deleteById(id);
+            return new ApiResponse(null, "User deleted successfully", HttpStatus.OK);
+        } catch (Exception e) {
+            log.error("Error while deleting user", e);
+            return new ApiResponse(null, "Error while deleting user", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 }
