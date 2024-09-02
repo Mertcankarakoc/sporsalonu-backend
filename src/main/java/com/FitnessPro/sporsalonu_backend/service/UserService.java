@@ -69,13 +69,6 @@ public class UserService {
             return new ApiResponse(request, "User already exists", HttpStatus.BAD_REQUEST);
         }
 
-        Set<UserRole> roles = new HashSet<>();
-        for (String role : request.getRoles()) {
-            UserRole userRole = userRoleRepository.findByName(role.toUpperCase())
-                    .orElseGet(() -> userRoleRepository.save(new UserRole(role.toUpperCase())));
-            roles.add(userRole);
-        }
-
         User user = User.builder()
                 .firstName(request.getFirstName())
                 .lastName(request.getLastName())
