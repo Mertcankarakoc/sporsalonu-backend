@@ -1,9 +1,6 @@
 package com.FitnessPro.sporsalonu_backend.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Data
 @Builder
@@ -11,6 +8,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class SignInRequest {
 
+    @NonNull
     private String email;
     private String password;
 }

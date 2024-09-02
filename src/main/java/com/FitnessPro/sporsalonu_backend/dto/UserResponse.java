@@ -1,24 +1,18 @@
 package com.FitnessPro.sporsalonu_backend.dto;
 
 import com.FitnessPro.sporsalonu_backend.model.UserRole;
-import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import java.util.Set;
+import java.util.UUID;
 
 @Data
 @Builder
-@AllArgsConstructor
-@NoArgsConstructor
-public class SignUpRequest {
-
+public class UserResponse {
+    private UUID id; // Ensure the type matches the User entity
     private String firstName;
     private String lastName;
     private String email;
-    private String password;
-    private Set<String> roles;
-
+    private Set<UserRole> roles;
 }

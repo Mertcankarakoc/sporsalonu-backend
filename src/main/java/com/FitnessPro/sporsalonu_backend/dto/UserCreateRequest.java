@@ -1,7 +1,6 @@
 package com.FitnessPro.sporsalonu_backend.dto;
 
 import com.FitnessPro.sporsalonu_backend.model.Address;
-import com.FitnessPro.sporsalonu_backend.model.Enum.Role;
 import jakarta.persistence.Column;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -26,5 +25,4 @@ public class UserCreateRequest {
     private LocalDateTime birthDay;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
-    private Role role;
 }

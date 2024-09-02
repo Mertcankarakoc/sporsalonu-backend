@@ -3,6 +3,7 @@ package com.FitnessPro.sporsalonu_backend.controller;
 import com.FitnessPro.sporsalonu_backend.dto.JwtAuthenticationResponse;
 import com.FitnessPro.sporsalonu_backend.dto.SignInRequest;
 import com.FitnessPro.sporsalonu_backend.dto.SignUpRequest;
+import com.FitnessPro.sporsalonu_backend.dto.UserResponse;
 import com.FitnessPro.sporsalonu_backend.service.jwt.AuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -18,7 +19,7 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping("/sign-up")
-    public JwtAuthenticationResponse signUp(@RequestBody SignUpRequest request) {
+    public UserResponse signUp(@RequestBody SignUpRequest request) {
         return authService.signUp(request);
     }
 

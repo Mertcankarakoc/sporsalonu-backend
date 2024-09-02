@@ -1,6 +1,5 @@
 package com.FitnessPro.sporsalonu_backend.model;
 
-import com.FitnessPro.sporsalonu_backend.model.Enum.Role;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
@@ -10,12 +9,9 @@ import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Entity
 @Data
@@ -46,8 +42,8 @@ public class User {
     private Date updatedAt;
     private boolean isActive;
 
-    @Enumerated(EnumType.STRING)
-    private Role role;
+    @ManyToMany(fetch = FetchType.EAGER)
+    private Set<UserRole> roles;
 
     @OneToMany(mappedBy = "user")
     @JsonBackReference
