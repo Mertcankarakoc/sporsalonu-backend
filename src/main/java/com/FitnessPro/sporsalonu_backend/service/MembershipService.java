@@ -1,6 +1,8 @@
 package com.FitnessPro.sporsalonu_backend.service;
 
 import com.FitnessPro.sporsalonu_backend.dto.CreateMembershipDto;
+import com.FitnessPro.sporsalonu_backend.dto.UpdateMembershipDto;
+import com.FitnessPro.sporsalonu_backend.exceptions.ResourceNotFoundException;
 import com.FitnessPro.sporsalonu_backend.model.ApiResponse;
 import com.FitnessPro.sporsalonu_backend.model.Membership;
 import com.FitnessPro.sporsalonu_backend.model.User;
@@ -9,6 +11,7 @@ import com.FitnessPro.sporsalonu_backend.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -80,4 +83,35 @@ public class MembershipService {
     public List<Membership> getActiveMemberships() {
         return membershipRepository.findByStatus("ACTIVE");
     }
+
+    public ApiResponse getMembershipByUserId(UUID userId) {
+        Membership membership = (Membership) membershipRepository.findByUserId(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("Membership not found for this user"));
+        return new ApiResponse(membership, "Membership fetched successfully", HttpStatus.OK);
+    }
+
+    public ApiResponse updateMembership(UpdateMembershipDto updateMembershipDto, UUID id, @AuthenticationPrincipal UUID uuid) {
+        try {
+            Membership membership = membershipRepository.findById(id)
+                    .orElseThrow(() -> new IllegalArgumentException("Membership not found"));
+
+            // Kullanıcının güncellemeye yetkili olup olmadığını kontrol edin
+            if (!membership.getUser().getId().equals(uuid)) {
+                return new ApiResponse(null, "Unauthorized to update this membership", HttpStatus.FORBIDDEN);
+            }
+
+            membership.setStartDate(updateMembershipDto.getStartDate());
+            membership.setTotalDays(updateMembershipDto.getTotalDays());
+            membership.setRemainingDays(updateMembershipDto.getTotalDays());
+            membership.setStatus(updateMembershipDto.getStatus());
+            membership.setActive(updateMembershipDto.isActive());
+
+            membershipRepository.save(membership);
+            return new ApiResponse(null, "Membership updated successfully", HttpStatus.OK);
+
+        } catch (Exception e) {
+            return new ApiResponse(null, "Error updating membership: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
 }

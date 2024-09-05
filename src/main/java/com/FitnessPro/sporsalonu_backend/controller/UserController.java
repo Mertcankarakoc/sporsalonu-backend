@@ -43,6 +43,7 @@ public class UserController {
         return userService.updateProfile(userUpdateRequest, authHeader);
     }
 
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     @PostMapping("/createUser")
     public ApiResponse createUser(@RequestBody UserCreateRequest userCreateRequest) {
         return userService.createUser(userCreateRequest);

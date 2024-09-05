@@ -18,7 +18,7 @@ import java.util.*;
 @Builder
 @RequiredArgsConstructor
 @AllArgsConstructor
-public class User {
+public class User{
 
     @Id
     @GeneratedValue

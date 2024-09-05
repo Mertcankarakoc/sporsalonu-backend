@@ -78,6 +78,7 @@ public class UserService {
                 .address(request.getAddress())
                 .birthDay(request.getBirthDay()) // Ensure birthDay is set correctly
                 .isActive(true)
+                .roles(request.getRoles())
                 .build();
 
         userRepository.save(user);
