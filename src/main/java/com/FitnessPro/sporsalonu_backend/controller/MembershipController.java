@@ -7,11 +7,9 @@ import com.FitnessPro.sporsalonu_backend.model.ApiResponse;
 import com.FitnessPro.sporsalonu_backend.model.Membership;
 import com.FitnessPro.sporsalonu_backend.service.MembershipService;
 import lombok.RequiredArgsConstructor;
-import org.antlr.v4.runtime.atn.SemanticContext;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -60,22 +58,21 @@ public class MembershipController {
         return membershipService.getActiveMemberships();
     }
 
-    @PreAuthorize("hasAuthority('ROLE_USER')")
-    @GetMapping("/user")
-    public ApiResponse getMyMembership(@AuthenticationPrincipal CustomUserDetails userDetails) {
-        UUID userId = userDetails.getId();
-        return membershipService.getMembershipByUserId(userId);
-    }
-
-    @PreAuthorize("hasAuthority('ROLE_USER') or hasAuthority('ROLE_ADMIN')")
     @PutMapping("/updateMembership/{id}")
+    @PreAuthorize("hasAuthority('ROLE_USER')")
     public ResponseEntity<ApiResponse> updateMembership(
             @PathVariable UUID id,
             @RequestBody UpdateMembershipDto updateMembershipDto,
             @AuthenticationPrincipal CustomUserDetails customUserDetails) {
 
-        UUID userId = customUserDetails.getId();
-        ApiResponse response = membershipService.updateMembership(updateMembershipDto, id, userId);
+        ApiResponse response = membershipService.updateMembership(updateMembershipDto, id, customUserDetails.getId());
+        return new ResponseEntity<>(response, response.getHttpStatus());
+    }
+
+    @PreAuthorize("hasAuthority('ROLE_USER')")
+    @GetMapping("/my-memberships")
+    public ResponseEntity<ApiResponse> getUserMemberships(@RequestHeader("Authorization") String authHeader) {
+        ApiResponse response = membershipService.getUserMemberships(authHeader);
         return new ResponseEntity<>(response, response.getHttpStatus());
     }
 }

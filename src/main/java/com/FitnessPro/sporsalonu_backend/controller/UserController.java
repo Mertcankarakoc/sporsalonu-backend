@@ -1,14 +1,16 @@
 package com.FitnessPro.sporsalonu_backend.controller;
 
 import com.FitnessPro.sporsalonu_backend.dto.UserCreateRequest;
+import com.FitnessPro.sporsalonu_backend.dto.UserProfileDto;
 import com.FitnessPro.sporsalonu_backend.dto.UserUpdateRequest;
 import com.FitnessPro.sporsalonu_backend.helpers.CustomUserDetails;
 import com.FitnessPro.sporsalonu_backend.model.ApiResponse;
 import com.FitnessPro.sporsalonu_backend.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
@@ -49,4 +51,16 @@ public class UserController {
         return userService.createUser(userCreateRequest);
     }
 
+    @PreAuthorize("hasAuthority('ROLE_USER')")
+    @GetMapping("/getUserByMembershipId/{membershipId}")
+    public ApiResponse getUserByMembershipId(@PathVariable UUID membershipId){
+        return userService.getUserByMembershipId(membershipId);
+    }
+
+    @PreAuthorize("hasAuthority('ROLE_USER')")
+    @GetMapping("/profile")
+    public ResponseEntity<ApiResponse> getUserProfile(@RequestHeader("Authorization") String authHeader) {
+        ApiResponse response = userService.getUserProfile(authHeader);
+        return new ResponseEntity<>(response, response.getHttpStatus());
+    }
 }

@@ -8,7 +8,9 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.hibernate.type.SqlTypes;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 
@@ -25,7 +27,8 @@ import java.util.UUID;
 public class Membership {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @JdbcTypeCode(SqlTypes.VARCHAR)
     private UUID id;
 
     @JsonFormat(pattern = "yyyy-MM-dd")
@@ -33,14 +36,13 @@ public class Membership {
     private int totalDays;
     private int remainingDays;
     private String status;
+    private String membershipType;
 
     @CreationTimestamp
     private Date createdAt;
 
     @UpdateTimestamp
     private Date updatedAt;
-
-    private boolean isActive;
 
     @ManyToOne
     @JsonManagedReference

@@ -1,7 +1,9 @@
 package com.FitnessPro.sporsalonu_backend.service;
 
 import com.FitnessPro.sporsalonu_backend.dto.UserCreateRequest;
+import com.FitnessPro.sporsalonu_backend.dto.UserProfileDto;
 import com.FitnessPro.sporsalonu_backend.dto.UserUpdateRequest;
+import com.FitnessPro.sporsalonu_backend.exceptions.ResourceNotFoundException;
 import com.FitnessPro.sporsalonu_backend.model.ApiResponse;
 import com.FitnessPro.sporsalonu_backend.model.User;
 import com.FitnessPro.sporsalonu_backend.model.UserRole;
@@ -117,4 +119,29 @@ public class UserService {
             return new ApiResponse(null, "Error while updating user", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+    public ApiResponse getUserByMembershipId(UUID membershipId){
+        try {
+            User user = userRepository.findByMembershipId(membershipId);
+            return new ApiResponse(user, "user fetched successfully", HttpStatus.OK);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public ApiResponse getUserProfile(String authHeader) {
+        // Token'dan kullanıcı ID'sini çıkar
+        String token = authHeader.startsWith("Bearer ") ? authHeader.substring(7) : authHeader;
+        String userIdStr = jwtService.extractUserId(token);  // Burada userId token'dan çıkarılıyor
+        UUID userId = UUID.fromString(userIdStr);
+
+        // Kullanıcıyı ID ile bul
+        var user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("Kullanıcı bulunamadı"));
+
+        // Kullanıcı bilgilerini döndür
+        return new ApiResponse(user, "Kullanıcı profili başarıyla alındı", HttpStatus.OK);
+    }
+
+
 }

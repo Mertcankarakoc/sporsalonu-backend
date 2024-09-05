@@ -1,6 +1,7 @@
 package com.FitnessPro.sporsalonu_backend.service;
 
 import com.FitnessPro.sporsalonu_backend.dto.CreateMembershipDto;
+import com.FitnessPro.sporsalonu_backend.dto.MembershipProfileDto;
 import com.FitnessPro.sporsalonu_backend.dto.UpdateMembershipDto;
 import com.FitnessPro.sporsalonu_backend.exceptions.ResourceNotFoundException;
 import com.FitnessPro.sporsalonu_backend.model.ApiResponse;
@@ -8,6 +9,7 @@ import com.FitnessPro.sporsalonu_backend.model.Membership;
 import com.FitnessPro.sporsalonu_backend.model.User;
 import com.FitnessPro.sporsalonu_backend.repository.MembershipRepository;
 import com.FitnessPro.sporsalonu_backend.repository.UserRepository;
+import com.FitnessPro.sporsalonu_backend.service.jwt.JwtService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -16,6 +18,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -24,6 +27,7 @@ public class MembershipService {
 
     private final MembershipRepository membershipRepository;
     private final UserRepository userRepository;
+    private final JwtService jwtService;
 
     public ApiResponse getMembershipAll(){
         try {
@@ -55,7 +59,6 @@ public class MembershipService {
                     .totalDays(createMembershipDto.getTotalDays())
                     .remainingDays(createMembershipDto.getTotalDays())
                     .status(createMembershipDto.getStatus())
-                    .isActive(createMembershipDto.isActive())
                     .user(user)
                     .build();
 
@@ -84,34 +87,49 @@ public class MembershipService {
         return membershipRepository.findByStatus("ACTIVE");
     }
 
-    public ApiResponse getMembershipByUserId(UUID userId) {
-        Membership membership = (Membership) membershipRepository.findByUserId(userId)
-                .orElseThrow(() -> new ResourceNotFoundException("Membership not found for this user"));
-        return new ApiResponse(membership, "Membership fetched successfully", HttpStatus.OK);
-    }
+    public ApiResponse updateMembership(UpdateMembershipDto updateMembershipDto, UUID membershipId, UUID userId) {
+        // Üyeliği bul
+        Membership membership = membershipRepository.findById(membershipId)
+                .orElseThrow(() -> new ResourceNotFoundException("Membership not found"));
 
-    public ApiResponse updateMembership(UpdateMembershipDto updateMembershipDto, UUID id, @AuthenticationPrincipal UUID uuid) {
-        try {
-            Membership membership = membershipRepository.findById(id)
-                    .orElseThrow(() -> new IllegalArgumentException("Membership not found"));
-
-            // Kullanıcının güncellemeye yetkili olup olmadığını kontrol edin
-            if (!membership.getUser().getId().equals(uuid)) {
-                return new ApiResponse(null, "Unauthorized to update this membership", HttpStatus.FORBIDDEN);
-            }
-
-            membership.setStartDate(updateMembershipDto.getStartDate());
-            membership.setTotalDays(updateMembershipDto.getTotalDays());
-            membership.setRemainingDays(updateMembershipDto.getTotalDays());
-            membership.setStatus(updateMembershipDto.getStatus());
-            membership.setActive(updateMembershipDto.isActive());
-
-            membershipRepository.save(membership);
-            return new ApiResponse(null, "Membership updated successfully", HttpStatus.OK);
-
-        } catch (Exception e) {
-            return new ApiResponse(null, "Error updating membership: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        // Kullanıcının güncelleme yetkisini kontrol et
+        if (!membership.getUser().getId().equals(userId)) {
+            return new ApiResponse(null, "Unauthorized to update this membership", HttpStatus.FORBIDDEN);
         }
+
+        // Üyeliği güncelle
+        membership.setStartDate(updateMembershipDto.getStartDate());
+        membership.setTotalDays(updateMembershipDto.getTotalDays());
+        membership.setRemainingDays(updateMembershipDto.getTotalDays());
+        membership.setStatus(updateMembershipDto.getStatus());
+
+        // Güncellenmiş üyeliği kaydet
+        membershipRepository.save(membership);
+
+        return new ApiResponse(membership, "Membership updated successfully", HttpStatus.OK);
     }
 
+    public ApiResponse getUserMemberships(String authHeader) {
+        // Token'dan kullanıcı ID'sini çıkar
+        String token = authHeader.startsWith("Bearer ") ? authHeader.substring(7) : authHeader;
+        String userIdStr = jwtService.extractUserId(token);
+        UUID userId = UUID.fromString(userIdStr);
+
+        // Kullanıcının üyeliklerini bul
+        List<Membership> memberships = membershipRepository.findByUserId(userId);
+
+        // DTO'ya dönüştür
+        List<MembershipProfileDto> membershipDTOs = memberships.stream().map(membership -> {
+            MembershipProfileDto dto = new MembershipProfileDto();
+            dto.setId(membership.getId());
+            dto.setMembershipType(membership.getMembershipType());
+            dto.setStartDate(membership.getStartDate());
+            dto.setStatus(membership.getStatus());
+            dto.setRemainingDays(membership.getRemainingDays());
+            dto.setTotalDays(membership.getTotalDays());
+            return dto;
+        }).collect(Collectors.toList());
+
+        return new ApiResponse(membershipDTOs, "Üyelik bilgileri başarıyla alındı", HttpStatus.OK);
+    }
 }
